@@ -1,0 +1,80 @@
+service: frulle
+
+plugins:
+  - serverless-offline-scheduler
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+  dynamodb:
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  memorySize: 512
+  timeout: 10
+  stage: dev
+  region: eu-west-1
+  environment:
+    DYNAMODB_LISTS_TABLE: ${self:service}-lists-${opt:stage, self:provider.stage}
+    SLACK_BOT_OAUTH_TOKEN: xoxb-241245283781-432585766258-yswKWcGEzGdNn4DAFcwNqeyJ  # change this to your bots oauth token
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_LISTS_TABLE}"
+
+functions:
+  hello:
+    handler: lib/handler.hello
+    events:
+      - http:
+          path: /slack/component
+          method: post
+      - http:
+          path: /slack/event
+          method: post
+      - http:
+          path: /actions/breakfastDone
+          method: get
+      - http:
+          path: /actions/planBreakfast
+          method: get
+  planBreakfast:
+    handler: lib/handlers/planBreakfast.handler
+    events:
+      - schedule: cron(0 11 ? * 4 *)
+  breakfastDone:
+    handler: lib/handlers/breakfastDone.handler
+    events:
+      - schedule: cron(30 11 ? * 6 *)
+  test:
+    handler: lib/handlers/test.handler
+
+resources:
+  Resources:
+    TodosDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: channel
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: channel
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_LISTS_TABLE}
