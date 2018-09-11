@@ -57,8 +57,6 @@ functions:
     handler: lib/handlers/breakfastDone.handler
     events:
       - schedule: cron(30 11 ? * 6 *)
-  test:
-    handler: lib/handlers/test.handler
 
 resources:
   Resources:
