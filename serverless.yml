@@ -13,12 +13,6 @@ custom:
       migrate: true
 
   slack: ${file(./config.${self:provider.stage}.json):slack}
-  # dev:
-    # slacktoken: ${file(./config.${self:provider.stage}.json):}
-#    slacktoken: xoxb-241245283781-430712505298-VkUm3qosJdOGNxAqncOvUViS
-  # prod:
-  #   slacktoken: ${file(./config.${self:provider.stage}.json):}
-#    slacktoken: xoxb-2200309268-434056814418-02VStIc2JrDpihBeAvHbVdUM
 
 provider:
   name: aws
@@ -57,6 +51,22 @@ functions:
       - http:
           path: /actions/planBreakfast
           method: get
+
+      - http:
+          path: /web/list/{channel}
+          method: get
+          request:
+            parameters:
+              paths:
+                channel: true
+      - http:
+          path: /web/list/{channel}
+          method: post
+          request:
+            parameters:
+              paths:
+                channel: true
+
   planBreakfast:
     handler: lib/handlers/planBreakfast.handler
     events:
