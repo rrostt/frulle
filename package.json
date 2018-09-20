@@ -6,7 +6,8 @@
   "scripts": {
     "start": "serverless offline start",
     "deploy": "serverless deploy",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha \"test/unit/**/*.spec.js\"",
+    "integrations": "mocha test/integration/*"
   },
   "author": "",
   "license": "ISC",
@@ -18,10 +19,16 @@
     "serverless-http": "^1.6.0"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^4.2.0",
+    "mocha": "^5.2.0",
     "nodemon": "^1.18.4",
+    "proxyquire": "^2.1.0",
     "serverless": "^1.30.3",
     "serverless-dynamodb-local": "^0.2.33",
     "serverless-offline": "^3.25.11",
-    "serverless-offline-scheduler": "^0.3.4"
+    "serverless-offline-scheduler": "^0.3.4",
+    "sinon": "^6.3.4",
+    "sinon-chai": "^3.2.0"
   }
 }
