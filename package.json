@@ -7,7 +7,8 @@
     "start": "serverless offline start",
     "deploy": "serverless deploy",
     "test": "mocha \"test/unit/**/*.spec.js\"",
-    "integrations": "mocha test/integration/*"
+    "integrations": "mocha test/integration/*",
+    "jest": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -24,6 +25,7 @@
     "mocha": "^5.2.0",
     "nodemon": "^1.18.4",
     "proxyquire": "^2.1.0",
+    "rewiremock": "^3.7.8",
     "serverless": "^1.30.3",
     "serverless-dynamodb-local": "^0.2.33",
     "serverless-offline": "^3.25.11",
