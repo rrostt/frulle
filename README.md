@@ -24,5 +24,13 @@
 
     > serverless deploy
 
+## Intgration test
+
+First run `serverless dynamodb start --stage integration`.
+
+Then run `npm run integration`.
+
+The integation tests will mock out the slackAdapter, and use the locally running version of dynamodb started by the first command.
+
 ## Todo
 

@@ -1,5 +1,3 @@
-let app
-
 const chai = require('chai')
 const sinonChai = require('sinon-chai')
 const chaiHttp = require('chai-http')
@@ -16,6 +14,7 @@ process.env = {
   SLACK_BOT_OAUTH_TOKEN: ''
 }
 
+let app
 const slackAdapter = require('../../lib/slack/slackAdapter')
 
 before(() => {
