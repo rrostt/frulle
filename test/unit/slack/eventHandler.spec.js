@@ -5,12 +5,8 @@ const sinonChai = require('sinon-chai')
 const expect = chai.expect
 chai.use(sinonChai)
 
-describe('slack/event route handler', () => {
-  let route
-  let req
-  let res
-  let send
-  let challenge
+describe('slack/event handler', () => {
+  let handler
   let message
   let appMention
   let memberJoinedChannel
@@ -18,21 +14,6 @@ describe('slack/event route handler', () => {
   let eventActions
 
   beforeEach(() => {
-    challenge = 'a challenge'
-    send = sinon.stub()
-    req = {
-      body: {
-        challenge,
-        type: 'type',
-        event: {}
-      }
-    }
-    res = {
-      status: sinon.stub().returns({
-        send
-      }),
-      sendStatus: sinon.stub()
-    }
     message = sinon.stub().resolves()
     appMention = sinon.stub().resolves()
     memberJoinedChannel = sinon.stub().resolves()
@@ -51,7 +32,7 @@ describe('slack/event route handler', () => {
         type: 'member_left_channel', action: memberLeftChannel
       }
     ]
-    route = proxyquire('../../../lib/slack/event', {
+    handler = proxyquire('../../../lib/slack/eventHandler', {
       './events/message': message,
       './events/appMention': appMention,
       './events/memberJoinedChannel': memberJoinedChannel,
@@ -59,20 +40,13 @@ describe('slack/event route handler', () => {
     })
   })
 
-  it('sends challenge on url_verification', () => {
-    req.body.type = 'url_verification'
-    route(req, res)
-    expect(send).to.have.been.calledWith(challenge)
-  })
-
   describe('eventActions', () => {
     it(`calls correct handler on event type`, () => {
       eventActions.map(({ type, action }) => {
-        req.body.event.type = type
-        return route(req, res)
+        const event = { type }
+        return handler(event)
           .then(_ => {
-            expect(action).to.have.been.called
-            expect(res.sendStatus).to.have.been.calledWith(200)
+            expect(action).to.have.been.calledWith(event)
           })
       })
     })
