@@ -64,7 +64,7 @@ describe('slack/events/appMention', () => {
     event.text = 'hej frulle ta bort mig'
     return appMention(event)
       .then(_ => {
-        expect(handleRemoveUser).to.be.called
+        expect(handleRemoveUser).to.be.calledWith(event)
       })
   })
 
@@ -72,7 +72,7 @@ describe('slack/events/appMention', () => {
     event.text = 'hej frulle lägg till mig'
     return appMention(event)
       .then(_ => {
-        expect(handleAddUser).to.be.called
+        expect(handleAddUser).to.be.calledWith(event)
       })
   })
 
@@ -80,7 +80,7 @@ describe('slack/events/appMention', () => {
     event.text = 'hej frulle vems tur är det?'
     return appMention(event)
       .then(_ => {
-        expect(planBreakfast).to.be.called
+        expect(planBreakfast).to.be.calledWith(event)
       })
   })
 
@@ -88,7 +88,7 @@ describe('slack/events/appMention', () => {
     event.text = 'hej frulle frukosten är klar'
     return appMention(event)
       .then(_ => {
-        expect(breakfastDone).to.be.called
+        expect(breakfastDone).to.be.calledWith(event)
       })
   })
 
@@ -96,7 +96,7 @@ describe('slack/events/appMention', () => {
     event.text = 'hej frulle <@abcde> fixade frukost'
     return appMention(event)
       .then(_ => {
-        expect(handleWhoFixedBreakfast).to.be.called
+        expect(handleWhoFixedBreakfast).to.be.calledWith(event)
       })
   })
 
@@ -104,7 +104,7 @@ describe('slack/events/appMention', () => {
     event.text = 'hej frulle ändra'
     return appMention(event)
       .then(_ => {
-        expect(handleChangeAssignee).to.be.called
+        expect(handleChangeAssignee).to.be.calledWith(event)
       })
   })
 
@@ -112,7 +112,7 @@ describe('slack/events/appMention', () => {
     event.text = 'hej frulle visa listan'
     return appMention(event)
       .then(_ => {
-        expect(handleShowList).to.be.called
+        expect(handleShowList).to.be.calledWith(event)
       })
   })
 })
