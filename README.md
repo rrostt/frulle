@@ -12,7 +12,7 @@
 
 - Deploy bot and set urls for Event api, and interactive components.
 
-- Subscribe to bot events: app_mention, member_joined_channel, member_left_channel
+- Subscribe to bot events: app_mention, member_joined_channel, member_left_channel, channel_left
 
 ## Run local, requires Java (because of dynamodb-local)
 
