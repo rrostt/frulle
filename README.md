@@ -24,7 +24,7 @@
 
     > serverless deploy
 
-## Intgration test
+## Integration test
 
 First run `serverless dynamodb start --stage integration`.
 
