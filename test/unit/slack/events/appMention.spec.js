@@ -16,7 +16,8 @@ describe('slack/events/appMention', () => {
     handleAddUser,
     handleRemoveUser,
     handleShowList,
-    handleHelp
+    handleHelp,
+    handleCancelled
   let event
 
   beforeEach(() => {
@@ -38,6 +39,7 @@ describe('slack/events/appMention', () => {
     handleRemoveUser = sinon.stub().resolves()
     handleShowList = sinon.stub().resolves()
     handleHelp = sinon.stub().resolves()
+    handleCancelled = sinon.stub().resolves()
 
     appMention = proxyquire('../../../../lib/slack/events/appMention', {
       '../../lists': lists,
@@ -49,7 +51,8 @@ describe('slack/events/appMention', () => {
       './appMentionActions/handleAddUser': handleAddUser,
       './appMentionActions/handleRemoveUser': handleRemoveUser,
       './appMentionActions/handleShowList': handleShowList,
-      './appMentionActions/handleHelp': handleHelp
+      './appMentionActions/handleHelp': handleHelp,
+      './appMentionActions/handleCancelled': handleCancelled
     })
   })
 
@@ -124,6 +127,14 @@ describe('slack/events/appMention', () => {
     return appMention(event)
       .then(_ => {
         expect(handleHelp).to.be.calledWith(event)
+      })
+  })
+
+  it('handles inställd', () => {
+    event.text = 'inställd'
+    return appMention(event)
+      .then(_ => {
+        expect(handleCancelled).to.be.calledWith(event)
       })
   })
 })
