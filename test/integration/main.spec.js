@@ -2,7 +2,6 @@ const chai = require('chai')
 const sinonChai = require('sinon-chai')
 const chaiHttp = require('chai-http')
 const expect = chai.expect
-const sinon = require('sinon')
 
 const axios = require('axios')
 
@@ -104,21 +103,7 @@ describe('the application', () => {
 
   describe('create list', () => {
     it('creates list with members in channel', () => {
-      const response_url = 'https://mockserver.rost.me/response_url'
-
-      // slackAdapter.getChannelInfo.resolves({
-      //   members: ['abc', 'def']
-      // })
-      // slackAdapter.resolveUsers.resolves([
-      //   {
-      //     id: 'abc',
-      //     real_name: 'Abc'
-      //   },
-      //   {
-      //     id: 'def',
-      //     real_name: 'Def'
-      //   }
-      // ])
+      const responseUrl = 'https://mockserver.rost.me/response_url'
 
       return chai.request(app)
         .post('/slack/component')
@@ -127,7 +112,7 @@ describe('the application', () => {
             callback_id: 'create_list',
             channel: { id: 'channel' },
             actions: [ { value: 'yes' } ],
-            response_url
+            response_url: responseUrl
           })
         })
         .then(response => {
@@ -136,10 +121,6 @@ describe('the application', () => {
             .then(calls => {
               expect(calls[0].body.attachments[0].text).to.be.eql('Listan: Abc, Def')
             })
-          // expect(slackAdapter.postResponse).to.have.been.called
-          // expect(slackAdapter.postResponse).to.have.been.calledWith(response_url)
-          // const msg = slackAdapter.postResponse.getCall(0).args[1]
-          // expect(msg.attachments[0].text).to.be.eql('Listan: Abc, Def')
         })
     })
   })
