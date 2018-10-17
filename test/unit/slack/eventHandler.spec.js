@@ -11,6 +11,7 @@ describe('slack/event handler', () => {
   let appMention
   let memberJoinedChannel
   let memberLeftChannel
+  let channelLeft
   let eventActions
 
   beforeEach(() => {
@@ -18,6 +19,7 @@ describe('slack/event handler', () => {
     appMention = sinon.stub().resolves()
     memberJoinedChannel = sinon.stub().resolves()
     memberLeftChannel = sinon.stub().resolves()
+    channelLeft = sinon.stub().resolves()
     eventActions = [
       {
         type: 'message', action: message
@@ -30,13 +32,17 @@ describe('slack/event handler', () => {
       },
       {
         type: 'member_left_channel', action: memberLeftChannel
+      },
+      {
+        type: 'channel_left', action: channelLeft
       }
     ]
     handler = proxyquire('../../../lib/slack/eventHandler', {
       './events/message': message,
       './events/appMention': appMention,
       './events/memberJoinedChannel': memberJoinedChannel,
-      './events/memberLeftChannel': memberLeftChannel
+      './events/memberLeftChannel': memberLeftChannel,
+      './events/channelLeft': channelLeft
     })
   })
 
