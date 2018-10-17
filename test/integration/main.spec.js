@@ -4,6 +4,8 @@ const chaiHttp = require('chai-http')
 const expect = chai.expect
 const sinon = require('sinon')
 
+const axios = require('axios')
+
 chai.use(chaiHttp)
 chai.use(sinonChai)
 
@@ -15,21 +17,55 @@ process.env = {
 }
 
 let app
-const slackAdapter = require('../../lib/slack/slackAdapter')
+
+function apiMock (method, url, response) {
+  return axios.post('https://mockserver.rost.me/_mock', {
+    baseUrl: url,
+    response,
+    method
+  })
+}
+
+function apiCall (url) {
+  return axios.get('https://mockserver.rost.me/_call', {
+    params: { url }
+  })
+  .then(response => response.data)
+}
 
 before(() => {
-  slackAdapter.sendMessage = sinon.stub().resolves()
-  slackAdapter.postResponse = sinon.stub().resolves()
-  slackAdapter.getChannelInfo = sinon.stub().resolves({})
-  slackAdapter.resolveUsers = sinon.stub().resolves([])
-
-  app = require('../../lib/app')
+  return Promise.all([
+    apiMock('GET', '/api/channels.info', {
+      channel: {
+        members: [ 'abc', 'def' ]
+      }
+    }),
+    apiMock('POST', '/api/chat.postMessage', {
+    }),
+    apiMock('POST', '/response_url', {
+    }),
+    apiMock('POST', '/api/users.list', {
+      members: [
+        {
+          id: 'abc',
+          real_name: 'Abc'
+        },
+        {
+          id: 'def',
+          real_name: 'Def'
+        }
+      ]
+    })
+  ])
+  .then(_ => {
+    app = require('../../lib/app')
+  })
 })
 
 after(() => {
 })
 
-describe.only('the application', () => {
+describe('the application', () => {
   it('handles url_verification events', () => {
     const challenge = 'asdf'
     return chai.request(app)
@@ -53,32 +89,37 @@ describe.only('the application', () => {
         event: {
           type: 'app_mention',
           text: '<@123>',
-          channel: 'channel',
+          channel: 'channel' + (Math.random() * 10000),
           user: 'user'
         }
       })
       .then(response => {
         expect(response).to.have.status(200)
-        expect(slackAdapter.sendMessage).to.have.been.called
-        expect(slackAdapter.sendMessage).to.have.been.calledWith('channel')
+        return apiCall('/api/chat.postMessage')
+          .then(calls => {
+            expect(calls[0].body.attachments[0].callback_id).to.be.eql('create_list')
+          })
       })
   })
 
-  describe('app_mention', () => {
+  describe('create list', () => {
     it('creates list with members in channel', () => {
-      const response_url = 'response_url'
+      const response_url = 'https://mockserver.rost.me/response_url'
 
-      slackAdapter.getChannelInfo.resolves({
-        members: ['abc', 'def']
-      })
-      slackAdapter.resolveUsers.resolves([{
-        id: 'abc',
-        real_name: 'Abc'
-      },
-      {
-        id: 'def',
-        real_name: 'Def'
-      }])
+      // slackAdapter.getChannelInfo.resolves({
+      //   members: ['abc', 'def']
+      // })
+      // slackAdapter.resolveUsers.resolves([
+      //   {
+      //     id: 'abc',
+      //     real_name: 'Abc'
+      //   },
+      //   {
+      //     id: 'def',
+      //     real_name: 'Def'
+      //   }
+      // ])
+
       return chai.request(app)
         .post('/slack/component')
         .send({
@@ -91,10 +132,14 @@ describe.only('the application', () => {
         })
         .then(response => {
           expect(response).to.have.status(200)
-          expect(slackAdapter.postResponse).to.have.been.called
-          expect(slackAdapter.postResponse).to.have.been.calledWith(response_url)
-          const msg = slackAdapter.postResponse.getCall(0).args[1]
-          expect(msg.attachments[0].text).to.be.eql('Listan: Abc, Def')
+          return apiCall('/response_url')
+            .then(calls => {
+              expect(calls[0].body.attachments[0].text).to.be.eql('Listan: Abc, Def')
+            })
+          // expect(slackAdapter.postResponse).to.have.been.called
+          // expect(slackAdapter.postResponse).to.have.been.calledWith(response_url)
+          // const msg = slackAdapter.postResponse.getCall(0).args[1]
+          // expect(msg.attachments[0].text).to.be.eql('Listan: Abc, Def')
         })
     })
   })

@@ -7,7 +7,7 @@
     "start": "serverless offline start",
     "deploy": "serverless deploy",
     "test": "mocha \"test/unit/**/*.spec.js\"",
-    "integrations": "mocha test/integration/*",
+    "integrations": "SLACK_HOST=https://mockserver.rost.me mocha test/integration/*",
     "jest": "jest"
   },
   "author": "",
