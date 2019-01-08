@@ -13,25 +13,25 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.311.0",
+    "aws-sdk": "^2.384.0",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
-    "express": "^4.16.3",
-    "serverless-http": "^1.6.0"
+    "express": "^4.16.4",
+    "serverless-http": "^1.8.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "chai-http": "^4.2.0",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.4",
+    "nodemon": "^1.18.9",
     "proxyquire": "^2.1.0",
-    "rewiremock": "^3.7.8",
-    "serverless": "^1.30.3",
-    "serverless-dynamodb-local": "^0.2.33",
-    "serverless-offline": "^3.25.14",
-    "serverless-offline-scheduler": "^0.3.4",
-    "sinon": "^6.3.4",
-    "sinon-chai": "^3.2.0"
+    "rewiremock": "^3.13.0",
+    "serverless": "^1.35.1",
+    "serverless-dynamodb-local": "^0.2.36",
+    "serverless-offline": "^3.31.3",
+    "serverless-offline-scheduler": "^0.3.5",
+    "sinon": "^6.3.5",
+    "sinon-chai": "^3.3.0"
   },
   "standard": {
     "globals": [
